@@ -7,8 +7,8 @@ except:
 
 sv_help = '''队友不及三人，快快寻找小伙伴吧～
 - [招募队友 <留言>] 招募队友，并留言，如要求即性别、校区等
-- [查询招募表] 		查看招募列表
-- [取消招募队友] 	取消招募队友
+- [查看招募] 		查看招募列表
+- [招募成功]或[招募取消] 	删除招募贴
 '''.strip()
 
 sv = Service('teamup', use_priv=priv.NORMAL, manage_priv=priv.ADMIN,
@@ -86,7 +86,7 @@ def process_table(gid):
     print(zhaomu)
 
     if gid not in zhaomu:
-        return "招募表是空的哦qwq"
+        return "招募表是空的哦qwq", ""
 
     msg = []
     qq = []
@@ -115,12 +115,12 @@ async def find_friend(bot, ev):
 
     add_message(gid, uid, message)
 
-    msg = "成功添加至招募栏上～\n发送[查询招募表]可以查看别人的招募，有心仪的队伍速速联系对方Q号哦～\n招募成功了也请发送[取消招募队友]以便从招募公告中删除"
+    msg = "成功添加至招募栏上～\n发送[查看招募]可以查看别人的招募，有心仪的队伍速速联系对方Q号哦～\n招募成功或招募取消的话也请发送[招募成功]或[招募取消]以便从招募公告中删除"
 
     await bot.send(ev, msg, at_sender=True)
 
 
-@sv.on_fullmatch(('查看招募表', '查询招募表'))
+@sv.on_fullmatch(('查看招募', '查询招募', '查看招募表', '查询招募表'))
 async def query_table(bot, ev):
 
     gid = str(ev.group_id)
@@ -134,7 +134,7 @@ async def query_table(bot, ev):
         await bot.send_group_forward_msg(group_id=ev.group_id, messages=msg)
 
 
-@sv.on_fullmatch('取消招募队友')
+@sv.on_fullmatch(('招募成功','招募完成','招募取消','招募关闭'))
 async def cancle_zhaomu(bot, ev):
 
     gid = str(ev.group_id)
@@ -148,7 +148,7 @@ async def cancle_zhaomu(bot, ev):
     ok = delete_user(gid, uid)
 
     if ok:
-        msg = "取消招募成功～"
+        msg = "招募贴已撤下～"
     else:
         msg = "招募表没找你惹qwq是不是记错了？"
 
